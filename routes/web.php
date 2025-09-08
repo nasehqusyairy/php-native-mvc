@@ -5,4 +5,5 @@ use Libs\Route;
 
 Route::get('/', 'HomeController@index');
 
-Route::get('/:nam/:umur', 'HomeController@greet');
+Route::get('/sapa/:nama/:umur', 'HomeController@greet');
+Route::get('/users', 'UserController@index');

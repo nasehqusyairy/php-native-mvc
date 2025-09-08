@@ -2,7 +2,18 @@
 
 use Libs\Route;
 
-require_once __DIR__ . '/../libs/Route.php';
+// autoloading
+spl_autoload_register(function ($class) {
+    // ubah namespace jadi path
+    $path = __DIR__ . '/../' . str_replace('\\', '/', $class) . '.php';
+
+    if (file_exists($path)) {
+        require $path;
+    }
+});
+
+// bootstrapping
+require_once __DIR__ . '/../libs/helpers.php';
 require_once __DIR__ . '/../routes/web.php';
 
 session_start();

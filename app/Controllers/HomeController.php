@@ -2,12 +2,12 @@
 
 class HomeController
 {
-    public function index(): void
+    public function index()
     {
-        echo "Welcome to Home";
+        view('home/index', ['title' => 'Home Page', 'name' => 'Naseh']);
     }
 
-    public function greet($nama, $umur): void
+    public function greet($nama, $umur)
     {
         echo "Hello, $nama! Umurmu $umur tahun.";
     }
