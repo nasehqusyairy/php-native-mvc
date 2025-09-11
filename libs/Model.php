@@ -42,6 +42,19 @@ class Model
 
         $columns = implode(", ", array_keys($fields));
         $placeholders = implode(", ", array_map(fn($f) => ":$f", array_keys($fields)));
+        /** PENJELASAN :
+         * 
+         * implode(", ", array_keys($fields)) akan menghasilkan string kolom yang dipisahkan koma.
+         * implode(", ", array_map(fn($f) => ":$f", array_keys($fields))) akan menghasilkan string placeholder yang dipisahkan koma.
+         * 
+         * Hasilnya :
+         * $columns = "name, email, password"
+         * $placeholders = ":name, :email, :password"
+         * 
+         * Contoh query yang dihasilkan :
+         * $query = "INSERT INTO users (name, email, password) VALUES (:name, :email, :password)";
+         * 
+         */
 
         $query = "INSERT INTO {$instance->tableName} ($columns) VALUES ($placeholders)";
         return DB::execute($query, $fields);
@@ -59,6 +72,17 @@ class Model
     {
         $fields = array_intersect_key($data, array_flip($this->fillable));
         $setClause = implode(", ", array_map(fn($f) => "$f = :$f", array_keys($fields)));
+        /** PENJELASAN :
+         * 
+         * implode(", ", array_map(fn($f) => "$f = :$f", array_keys($fields))) akan menghasilkan string SET clause yang dipisahkan koma.
+         * 
+         * Hasilnya :
+         * $setClause = "name = :name, email = :email, password = :password"
+         * 
+         * Contoh query yang dihasilkan :
+         * $query = "UPDATE users SET name = :name, email = :email, password = :password WHERE id = :id";
+         * 
+         */
 
         $query = "UPDATE {$this->tableName} SET $setClause WHERE " . $this->whereClause;
         return DB::execute($query, array_merge($fields, $this->values));
