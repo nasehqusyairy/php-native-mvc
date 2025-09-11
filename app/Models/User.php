@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Libs\DB;
 use Libs\Model;
 
 class User extends Model
@@ -10,11 +9,14 @@ class User extends Model
     protected $tableName = 'users';
     protected $fillable = ['name', 'email', 'password'];
 
-    public static function findByEmail($email)
+    public static function findByEmail($email, $id = null)
     {
-        $instance = new static;
-        $query = "SELECT * FROM {$instance->tableName} WHERE email = :email";
-        $result = DB::execute($query, ['email' => $email]);
-        return $result ? $result[0] : null;
+        $query = "email = :email";
+        $params = ['email' => $email];
+        if ($id) {
+            $query .= " AND id != :id";
+            $params['id'] = $id;
+        }
+        return static::where($query, $params)->first();
     }
 }

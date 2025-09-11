@@ -73,7 +73,7 @@ class UserController
             'email' => $_POST['email']
         ];
 
-        $existingUser = User::where("email = :email AND id != :id", ['email' => $data['email'], 'id' => $id])->first();
+        $existingUser = User::findByEmail($data['email'], $id);
         if ($existingUser) {
             return back(['danger' => 'Email already exists']);
         }
