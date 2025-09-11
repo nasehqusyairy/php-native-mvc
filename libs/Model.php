@@ -47,6 +47,14 @@ class Model
         return DB::execute($query, $fields);
     }
 
+    public static function where(string $whereClause, array $values)
+    {
+        $instance = new static;
+        $instance->whereClause = $whereClause;
+        $instance->values = $values;
+        return $instance;
+    }
+
     public function update(array $data)
     {
         $fields = array_intersect_key($data, array_flip($this->fillable));
@@ -60,14 +68,6 @@ class Model
     {
         $query = "DELETE FROM {$this->tableName} WHERE " . $this->whereClause;
         return DB::execute($query, $this->values);
-    }
-
-    public static function where(string $whereClause, array $values)
-    {
-        $instance = new static;
-        $instance->whereClause = $whereClause;
-        $instance->values = $values;
-        return $instance;
     }
 
     public function limit(int $limit)
