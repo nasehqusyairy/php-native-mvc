@@ -4,9 +4,9 @@ namespace Libs;
 
 class Route
 {
-    public static $routes = [];
+    private static $routes = [];
 
-    protected static function add(string $method, string $uri, string $action,  $middleware = [])
+    private static function add(string $method, string $uri, string $action,  $middleware = [])
     {
         self::$routes[] = [
             'method' => strtoupper($method),
