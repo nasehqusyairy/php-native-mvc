@@ -5,11 +5,7 @@ use Libs\Route;
 // autoloading
 spl_autoload_register(function ($class) {
     // ubah namespace jadi path
-    $path = __DIR__ . '/../' . str_replace('\\', '/', $class) . '.php';
-
-    if (file_exists($path)) {
-        require $path;
-    }
+    require_once __DIR__ . '/../' . str_replace('\\', '/', $class) . '.php';
 });
 
 // bootstrapping

@@ -4,29 +4,47 @@ namespace Libs;
 
 class Route
 {
-    protected static $routes = [];
+    public static $routes = [];
 
-    protected static function add($method, $uri, $action, $middleware = [])
+    protected static function add(string $method, string $uri, string $action,  $middleware = [])
     {
         self::$routes[] = [
             'method' => strtoupper($method),
-            'uri' => $uri,
+            'uri' => '/' . $uri,
             'action' => $action,
             'middleware' => $middleware
         ];
     }
 
-    public static function get($uri, $action, $middleware = [])
+    public static function get(string $uri, string $action, array $middleware = [])
     {
-        self::add('GET', $uri, $action, $middleware);
+        self::add('GET', ltrim($uri, '/'), $action, $middleware);
     }
 
-    public static function post($uri, $action, $middleware = [])
+    public static function post(string $uri, string $action, array $middleware = [])
     {
-        self::add('POST', $uri, $action, $middleware);
+        self::add('POST', ltrim($uri, '/'), $action, $middleware);
     }
 
-    public static function dispatch($requestUri, $requestMethod)
+    public static function group(string $prefix, callable $callback, array $middleware = [])
+    {
+        $originalRoutes = self::$routes;
+        self::$routes = [];
+
+        $callback();
+
+        $groupedRoutes = self::$routes;
+        self::$routes = $originalRoutes;
+
+        foreach ($groupedRoutes as $route) {
+            $uri = '/' . rtrim(ltrim($prefix, '/') . '/' . ltrim($route['uri'], '/'), '/');
+            $route['uri'] = $uri;
+            $route['middleware'] = array_merge($middleware, $route['middleware']);
+            self::$routes[] = $route;
+        }
+    }
+
+    public static function dispatch(string $requestUri, string $requestMethod)
     {
         foreach (self::$routes as $route) {
             $pattern = "@^" . preg_replace('/:([a-zA-Z_]+)/', '([^/]+)', $route['uri']) . "$@";
@@ -64,8 +82,8 @@ class Route
 
                 if (is_string($route['action']) && strpos($route['action'], '@') !== false) {
                     list($controller, $method) = explode('@', $route['action']);
-                    require_once "../app/Controllers/$controller.php";
-                    $obj = new $controller;
+                    $className = "App\\Controllers\\$controller";
+                    $obj = new $className();
                     return call_user_func_array([$obj, $method], $matches);
                 }
             }

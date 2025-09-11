@@ -1,6 +1,9 @@
 <?php
 
-function view($viewPath, $data = [], $layoutPath = 'default')
+/**
+ * @param array<string, mixed> $data  Array untuk data yang dikirim ke view
+ */
+function view(string $viewPath, $data = [], $layoutPath = 'default')
 {
     // ekstrak array jadi variabel
     extract($data);
@@ -32,4 +35,59 @@ function view($viewPath, $data = [], $layoutPath = 'default')
     } else {
         echo $content;
     }
+
+    if (isset($_SESSION['_old_input'])) {
+        unset($_SESSION['_old_input']);
+    }
+}
+
+function old(string $key, string $default = ''): string
+{
+    // Ambil dari session old input
+    if (isset($_SESSION['_old_input'][$key])) {
+        return $_SESSION['_old_input'][$key];
+    }
+
+    return $default;
+}
+
+/**
+ * @param array<string, mixed> $flash  Array asosiatif untuk flash message
+ */
+function redirect(string $url, array $flash = []): void
+{
+    // Simpan flash message (sekali pakai)
+    if ($flash) {
+        $_SESSION['flash'] = $flash;
+    }
+
+    header("Location: $url");
+    exit;
+}
+
+
+/**
+ * @param array<string, mixed> $flash  Array asosiatif untuk flash message
+ */
+function back(array $flash = [])
+{
+    // Simpan input lama (supaya bisa dipanggil dengan old())
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $_SESSION['_old_input'] = $_POST;
+    }
+    $referer = $_SERVER['HTTP_REFERER'] ?? '/';
+    redirect($referer, $flash);
+}
+
+/**
+ * @param array<string, mixed> $flash  Array asosiatif untuk flash message
+ */
+function flash($key): string|null
+{
+    if (isset($_SESSION['flash'][$key])) {
+        $message = $_SESSION['flash'][$key];
+        unset($_SESSION['flash'][$key]);
+        return $message;
+    }
+    return null;
 }
