@@ -31,6 +31,14 @@ class Model
     {
         $instance = new static;
         $fields = array_intersect_key($data, array_flip($instance->fillable));
+        /** PENJELASAN :
+         * 
+         * Kita harus memastikan bahwa hanya field yang ada di $fillable yang akan dimasukkan ke dalam query.
+         * kita menggunakan array_intersect_key untuk menyaring $data berdasarkan kunci yang ada di $fillable.
+         * Karena array_intersect_key membutuhkan array asosiatif, 
+         * maka kita gunakan array_flip untuk membalik $fillable menjadi array asosiatif dengan nilai sebagai kunci.
+         * 
+         */
 
         $columns = implode(", ", array_keys($fields));
         $placeholders = implode(", ", array_map(fn($f) => ":$f", array_keys($fields)));
@@ -44,16 +52,14 @@ class Model
         $fields = array_intersect_key($data, array_flip($this->fillable));
         $setClause = implode(", ", array_map(fn($f) => "$f = :$f", array_keys($fields)));
 
-        $query = "UPDATE {$this->tableName} SET $setClause WHERE id = :id";
-        $fields['id'] = $data['id'];
-        return DB::execute($query, $fields);
+        $query = "UPDATE {$this->tableName} SET $setClause WHERE " . $this->whereClause;
+        return DB::execute($query, array_merge($fields, $this->values));
     }
 
-    public static function delete($id)
+    public function delete()
     {
-        $instance = new static;
-        $query = "DELETE FROM {$instance->tableName} WHERE id = :id";
-        return DB::execute($query, ['id' => $id]);
+        $query = "DELETE FROM {$this->tableName} WHERE " . $this->whereClause;
+        return DB::execute($query, $this->values);
     }
 
     public static function where(string $whereClause, array $values)

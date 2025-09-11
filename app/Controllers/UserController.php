@@ -53,7 +53,7 @@ class UserController
 
     public function delete($id)
     {
-        User::delete($id);
+        User::where('id = :id', ['id' => $id])->delete();
         return redirect('/users', ['success' => 'User deleted successfully']);
     }
 

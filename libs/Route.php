@@ -10,7 +10,7 @@ class Route
     {
         self::$routes[] = [
             'method' => strtoupper($method),
-            'uri' => '/' . $uri,
+            'uri' => ltrim($uri, '/'),
             'action' => $action,
             'middleware' => $middleware
         ];
@@ -18,12 +18,12 @@ class Route
 
     public static function get(string $uri, string $action, array $middleware = [])
     {
-        self::add('GET', ltrim($uri, '/'), $action, $middleware);
+        self::add('get', $uri, $action, $middleware);
     }
 
     public static function post(string $uri, string $action, array $middleware = [])
     {
-        self::add('POST', ltrim($uri, '/'), $action, $middleware);
+        self::add('post', $uri, $action, $middleware);
     }
 
     public static function group(string $prefix, callable $callback, array $middleware = [])
@@ -37,55 +37,38 @@ class Route
         self::$routes = $originalRoutes;
 
         foreach ($groupedRoutes as $route) {
-            $uri = '/' . rtrim(ltrim($prefix, '/') . '/' . ltrim($route['uri'], '/'), '/');
+            $uri = trim($prefix, '/') . '/' . $route['uri'];
+            $uri = trim($uri, '/'); // pastikan rapi
             $route['uri'] = $uri;
             $route['middleware'] = array_merge($middleware, $route['middleware']);
             self::$routes[] = $route;
         }
     }
 
+
     public static function dispatch(string $requestUri, string $requestMethod)
     {
         foreach (self::$routes as $route) {
+            // Tambahkan slash di depan saat bikin regex pattern
             $pattern = "@^" . preg_replace('/:([a-zA-Z_]+)/', '([^/]+)', $route['uri']) . "$@";
 
             if ($route['method'] === strtoupper($requestMethod) && preg_match($pattern, $requestUri, $matches)) {
-
                 array_shift($matches);
 
-                // Jalankan middleware chain
+                // jalankan middleware
                 foreach ($route['middleware'] as $mw) {
-                    if (is_callable($mw)) {
-                        $result = $mw();
-                        if ($result === false) {
-                            http_response_code(403);
-                            echo "Forbidden by middleware";
-                            return;
-                        }
-                    } elseif (is_string($mw) && class_exists($mw)) {
-                        $mwObj = new $mw;
-                        if (method_exists($mwObj, 'handle')) {
-                            $result = $mwObj->handle();
-                            if ($result === false) {
-                                http_response_code(403);
-                                echo "Forbidden by middleware";
-                                return;
-                            }
-                        }
+                    $mwObj = new $mw;
+                    if (!$mwObj->handle()) {
+                        http_response_code(403);
+                        echo "Forbidden by middleware";
+                        return;
                     }
                 }
 
-                // Jalankan action utama
-                if (is_callable($route['action'])) {
-                    return call_user_func_array($route['action'], $matches);
-                }
-
-                if (is_string($route['action']) && strpos($route['action'], '@') !== false) {
-                    list($controller, $method) = explode('@', $route['action']);
-                    $className = "App\\Controllers\\$controller";
-                    $obj = new $className();
-                    return call_user_func_array([$obj, $method], $matches);
-                }
+                list($controller, $method) = explode('@', $route['action']);
+                $className = "App\\Controllers\\$controller";
+                $obj = new $className();
+                return call_user_func_array([$obj, $method], $matches);
             }
         }
 
