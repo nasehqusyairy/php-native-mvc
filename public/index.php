@@ -12,6 +12,7 @@ spl_autoload_register(function ($class) {
 require_once __DIR__ . '/../libs/helpers.php';
 require_once __DIR__ . '/../routes/web.php';
 
+// untuk keperluan session (flash message, old input, login, dsb)
 session_start();
 
 // Ambil request
