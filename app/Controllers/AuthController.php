@@ -22,17 +22,15 @@ class AuthController
         if ($user && password_verify($password, $user->password)) {
             // Login berhasil
             $_SESSION['user'] = $user->id;
-            redirect('/');
-        } else {
-            // Login gagal
-            return back(['danger' => 'Invalid email or password']);
+            return redirect('/');
         }
+
+        return back(['danger' => 'Invalid email or password']);
     }
 
     public function logout()
     {
-        // Proses logout
         session_destroy();
-        redirect('/auth');
+        return redirect('/auth');
     }
 }
