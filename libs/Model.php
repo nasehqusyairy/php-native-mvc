@@ -7,25 +7,10 @@ class Model
     protected $tableName;
     protected $fillable = [];
 
-    private $whereClause = '';
+    private $whereClause;
     private $values = [];
     private $limit;
     private $offset;
-
-    public static function all(): array
-    {
-        $instance = new static;
-        $query = "SELECT * FROM {$instance->tableName}";
-        return DB::execute($query);
-    }
-
-    public static function find($id)
-    {
-        $instance = new static;
-        $query = "SELECT * FROM {$instance->tableName} WHERE id = :id";
-        $result = DB::execute($query, ['id' => $id]);
-        return $result ? $result[0] : null;
-    }
 
     public static function create(array $data)
     {
@@ -60,12 +45,59 @@ class Model
         return DB::execute($query, $fields);
     }
 
+    public function get()
+    {
+        $query = "SELECT * FROM {$this->tableName}";
+        if ($this->whereClause) {
+            $query .= " WHERE {$this->whereClause}";
+        }
+
+        if ($this->limit !== null) {
+            $query .= " LIMIT {$this->limit}";
+        }
+
+        if ($this->offset !== null) {
+            $query .= " OFFSET {$this->offset}";
+        }
+
+        return DB::execute($query, $this->values);
+    }
+
+    public static function all(): array
+    {
+        $instance = new static;
+        return $instance->get();
+    }
+
     public static function where(string $whereClause, array $values)
     {
         $instance = new static;
         $instance->whereClause = $whereClause;
         $instance->values = $values;
         return $instance;
+    }
+
+    public function limit(int $limit)
+    {
+        $this->limit = $limit;
+        return $this;
+    }
+
+    public function offset(int $offset)
+    {
+        $this->offset = $offset;
+        return $this;
+    }
+
+    public function first()
+    {
+        $results = $this->limit(1)->offset(0)->get();
+        return $results ? $results[0] : null;
+    }
+
+    public static function find($id)
+    {
+        return static::where('id = :id', ['id' => $id])->first();
     }
 
     public function update(array $data)
@@ -90,45 +122,8 @@ class Model
 
     public function delete()
     {
-        $query = "DELETE FROM {$this->tableName} WHERE " . $this->whereClause;
+        $query = "DELETE FROM {$this->tableName}" . ($this->whereClause ? " WHERE {$this->whereClause}" : "");
         return DB::execute($query, $this->values);
-    }
-
-    public function limit(int $limit)
-    {
-        $this->limit = $limit;
-        return $this;
-    }
-
-    public function offset(int $offset)
-    {
-        $this->offset = $offset;
-        return $this;
-    }
-
-    public function get()
-    {
-        $query = "SELECT * FROM {$this->tableName}";
-        if ($this->whereClause) {
-            $query .= " WHERE {$this->whereClause}";
-        }
-
-        if ($this->limit !== null) {
-            $query .= " LIMIT {$this->limit}";
-        }
-
-        if ($this->offset !== null) {
-            $query .= " OFFSET {$this->offset}";
-        }
-
-        return DB::execute($query, $this->values);
-    }
-
-    public function first()
-    {
-        $this->limit = 1;
-        $results = $this->get();
-        return $results ? $results[0] : null;
     }
 
     private function pagination(int $page = 1, int $limit = 10)

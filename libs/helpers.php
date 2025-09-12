@@ -36,16 +36,16 @@ function view(string $viewPath, $data = [], $layoutPath = 'default')
         echo $content;
     }
 
-    if (isset($_SESSION['_old_input'])) {
-        unset($_SESSION['_old_input']);
+    if (isset($_SESSION['_old'])) {
+        unset($_SESSION['_old']);
     }
 }
 
 function old(string $key, string $default = ''): string
 {
     // Ambil dari session old input
-    if (isset($_SESSION['_old_input'][$key])) {
-        return $_SESSION['_old_input'][$key];
+    if (isset($_SESSION['_old'][$key])) {
+        return $_SESSION['_old'][$key];
     }
 
     return $default;
@@ -58,7 +58,7 @@ function redirect(string $url, array $flash = []): void
 {
     // Simpan flash message (sekali pakai)
     if ($flash) {
-        $_SESSION['flash'] = $flash;
+        $_SESSION['_flash'] = $flash;
     }
 
     header("Location: $url");
@@ -73,7 +73,7 @@ function back(array $flash = [])
 {
     // Simpan input lama (supaya bisa dipanggil dengan old())
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $_SESSION['_old_input'] = $_POST;
+        $_SESSION['_old'] = $_POST;
     }
     $referer = $_SERVER['HTTP_REFERER'] ?? '/';
     redirect($referer, $flash);
@@ -84,9 +84,9 @@ function back(array $flash = [])
  */
 function flash($key): string|null
 {
-    if (isset($_SESSION['flash'][$key])) {
-        $message = $_SESSION['flash'][$key];
-        unset($_SESSION['flash'][$key]);
+    if (isset($_SESSION['_flash'][$key])) {
+        $message = $_SESSION['_flash'][$key];
+        unset($_SESSION['_flash'][$key]);
         return $message;
     }
     return null;

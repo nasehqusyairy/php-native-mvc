@@ -11,12 +11,12 @@ class User extends Model
 
     public static function findByEmail($email, $id = null)
     {
-        $query = "email = :email";
+        $whereClause = "email = :email";
         $params = ['email' => $email];
         if ($id) {
-            $query .= " AND id != :id";
+            $whereClause .= " AND id != :id";
             $params['id'] = $id;
         }
-        return static::where($query, $params)->first();
+        return static::where($whereClause, $params)->first();
     }
 }

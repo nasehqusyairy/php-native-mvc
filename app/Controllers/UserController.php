@@ -39,7 +39,7 @@ class UserController
         $data = [
             'name' => $_POST['name'],
             'email' => $_POST['email'],
-            'password' => password_hash($_POST['password'], PASSWORD_BCRYPT)
+            'password' => password_hash($_POST['password'], PASSWORD_DEFAULT)
         ];
 
         if (User::findByEmail($data['email'])) {
