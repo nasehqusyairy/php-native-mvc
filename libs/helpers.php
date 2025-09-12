@@ -36,6 +36,7 @@ function view(string $viewPath, $data = [], $layoutPath = 'default')
         echo $content;
     }
 
+    // Hapus session old input jika ada
     if (isset($_SESSION['_old'])) {
         unset($_SESSION['_old']);
     }
@@ -75,6 +76,8 @@ function back(array $flash = [])
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['_old'] = $_POST;
     }
+
+    // Redirect ke halaman sebelumnya
     $referer = $_SERVER['HTTP_REFERER'] ?? '/';
     redirect($referer, $flash);
 }
@@ -85,8 +88,11 @@ function back(array $flash = [])
 function flash($key): string|null
 {
     if (isset($_SESSION['_flash'][$key])) {
+
         $message = $_SESSION['_flash'][$key];
+
         unset($_SESSION['_flash'][$key]);
+
         return $message;
     }
     return null;
