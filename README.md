@@ -84,7 +84,7 @@ class HomeController
 }
 ```
 
-**public/index.php**
+**routes/web.php**
 
 ```php
 <?php
