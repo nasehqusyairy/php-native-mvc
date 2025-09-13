@@ -55,7 +55,7 @@ php-native-mvc/
 3. Jalankan server lokal:
 
    ```bash
-   composer start
+   php serve
    ```
 
 4. Buka browser dan akses:
