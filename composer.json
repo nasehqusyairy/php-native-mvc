@@ -1,0 +1,19 @@
+{
+    "name": "nasyikhal-qusyairy/native-mvc",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Libs\\": "libs/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mohammad Nasyikh Al-Qusyairy",
+            "email": "nasyikhqusyairy@gmail.com"
+        }
+    ],
+    "require": {},
+    "scripts": {
+        "start": "php -S localhost:8000 -t public"
+    }
+}

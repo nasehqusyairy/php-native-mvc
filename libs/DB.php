@@ -11,7 +11,8 @@ class DB
 
     public function __construct()
     {
-        $this->conn = new PDO('mysql:host=localhost;dbname=for_learning', 'root', '');
+        $env = parse_ini_file(__DIR__ . '/../.env');
+        $this->conn = new PDO('mysql:host=' . $env['DB_HOST'] . ';dbname=' . $env['DB_DATABASE'], $env['DB_USERNAME'], $env['DB_PASSWORD']);
     }
 
     public static function execute($query, $params = [])

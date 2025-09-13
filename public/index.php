@@ -3,14 +3,14 @@
 use Libs\Route;
 
 // autoloading
-spl_autoload_register(function ($class) {
-    // ubah namespace jadi path
-    require_once __DIR__ . '/../' . str_replace('\\', '/', $class) . '.php';
-});
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // bootstrapping
 require_once __DIR__ . '/../libs/helpers.php';
 require_once __DIR__ . '/../routes/web.php';
+
+// load .env
+
 
 // untuk keperluan session (flash message, old input, login, dsb)
 session_start();
