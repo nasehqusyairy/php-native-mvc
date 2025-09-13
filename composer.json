@@ -2,8 +2,7 @@
     "name": "nasyikhal-qusyairy/native-mvc",
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "Libs\\": "libs/"
+            "App\\": "app/"
         }
     },
     "authors": [
