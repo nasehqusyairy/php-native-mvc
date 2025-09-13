@@ -1,8 +1,9 @@
 <?php
 
-use Libs\Route;
-
 // autoloading
+
+use App\Core\Route;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 // bootstrapping

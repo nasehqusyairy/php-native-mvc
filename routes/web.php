@@ -1,8 +1,8 @@
 <?php
 
+use App\Core\Route;
 use App\Middlewares\Authentication;
 use App\Middlewares\Guest;
-use Libs\Route;
 
 // Route::get('/home/:nama/greet/:umur', 'HomeController@greeting');
 
