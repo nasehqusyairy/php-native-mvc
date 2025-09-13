@@ -13,6 +13,4 @@ require_once __DIR__ . '/../routes/web.php';
 session_start();
 
 // handle request
-$requestUri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
-$requestMethod = $_SERVER['REQUEST_METHOD'];
-Route::dispatch($requestUri, $requestMethod);
+Route::capture();

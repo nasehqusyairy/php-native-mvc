@@ -65,12 +65,29 @@ class Route
     }
 
 
-    public static function dispatch(string $requestUri, string $requestMethod)
+    public static function capture()
     {
+        $requestUri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+        $requestMethod = $_SERVER['REQUEST_METHOD'];
+
         foreach (self::$routes as $route) {
 
             // Buat pola regex untuk melakukan pencocokan string (antara uri dan route)
-            $pattern = "@^" . preg_replace('/:([a-zA-Z_]+)/', '([^/]+)', $route['uri']) . "$@";
+            $pattern = "@^" . preg_replace('/:([a-zA-Z]+)/', '([^/]+)', $route['uri']) . "$@";
+            /** PENJELASAN
+             * 
+             * preg_replace('/:([a-zA-Z_]+)/', '([^/]+)', $route['uri']) menggantikan parameter
+             * dalam route (misal: :id, :name) dengan pola regex '([^/]+)' yang menangkap
+             * satu atau lebih karakter kecuali slash (/).
+             * 
+             * Misal:
+             * Route: users/:id
+             * Menjadi pola regex: users/([^/]+)
+             * 
+             * Kemudian, "@^" dan "$@" ditambahkan untuk memastikan pencocokan dari awal hingga akhir string.
+             * Jadi, pola akhir menjadi: @^users/([^/]+)$@
+             * 
+             */
 
             // Cek apakah method dan URI cocok
             if ($route['method'] === strtoupper($requestMethod) && preg_match($pattern, $requestUri, $matches)) {
