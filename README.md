@@ -1,6 +1,4 @@
-# 📌 php-native-mvc
-
-`php-native-mvc` adalah implementasi **framework MVC dasar** dengan **PHP Native** yang terinspirasi dari konsep [Laravel](https://laravel.com)
+Proyek ini merupakan implementasi **MVC** menggunakan *vanilla* **PHP** atau *native* yang terinspirasi dari framework [Laravel](https://laravel.com)
 .
 Tujuannya adalah memberikan gambaran bagaimana pola MVC (Model–View–Controller) dapat diimplementasikan tanpa framework besar, namun tetap rapi, terstruktur, dan mudah dikembangkan.
 
