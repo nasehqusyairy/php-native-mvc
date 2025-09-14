@@ -6,7 +6,7 @@ use App\Core\Model;
 
 class User extends Model
 {
-    protected $tableName = 'users';
+    protected $table = 'users';
     protected $fillable = ['name', 'email', 'password'];
 
     public static function findByEmail($email, $id = null)

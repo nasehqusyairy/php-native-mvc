@@ -4,7 +4,7 @@ namespace App\Core;
 
 class Model
 {
-    protected $tableName;
+    protected $table;
     protected $fillable = [];
 
     private $whereClause;
@@ -41,13 +41,13 @@ class Model
          * 
          */
 
-        $query = "INSERT INTO {$instance->tableName} ($columns) VALUES ($placeholders)";
+        $query = "INSERT INTO {$instance->table} ($columns) VALUES ($placeholders)";
         return DB::execute($query, $fields);
     }
 
     public function get()
     {
-        $query = "SELECT * FROM {$this->tableName}";
+        $query = "SELECT * FROM {$this->table}";
         if ($this->whereClause) {
             $query .= " WHERE {$this->whereClause}";
         }
@@ -116,13 +116,13 @@ class Model
          * 
          */
 
-        $query = "UPDATE {$this->tableName} SET $setClause WHERE " . $this->whereClause;
+        $query = "UPDATE {$this->table} SET $setClause WHERE " . $this->whereClause;
         return DB::execute($query, array_merge($fields, $this->values));
     }
 
     public function delete()
     {
-        $query = "DELETE FROM {$this->tableName}" . ($this->whereClause ? " WHERE {$this->whereClause}" : "");
+        $query = "DELETE FROM {$this->table}" . ($this->whereClause ? " WHERE {$this->whereClause}" : "");
         return DB::execute($query, $this->values);
     }
 
@@ -134,7 +134,7 @@ class Model
         $data = $this->get();
 
         // Get total count
-        $countQuery = "SELECT COUNT(*) as count FROM {$this->tableName}";
+        $countQuery = "SELECT COUNT(*) as count FROM {$this->table}";
         if ($this->whereClause) {
             $countQuery .= " WHERE {$this->whereClause}";
         }
