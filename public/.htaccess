@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Pastikan RewriteBase sesuai dengan folder kamu
+    # Misalnya kalau project ada di http://localhost/projekku
+    # maka ganti jadi /projekku/
+    RewriteBase /
+
+    # Kalau request langsung ke file atau folder yang ada → jangan di-redirect
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Selain itu, arahkan semua request ke index.php
+    RewriteRule ^ index.php [L]
+</IfModule>
