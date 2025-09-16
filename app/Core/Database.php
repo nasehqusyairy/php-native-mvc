@@ -4,7 +4,7 @@ namespace APP\Core;
 
 use PDO;
 
-class DB
+class Database
 {
     private $conn;
     private static $instance = null;
