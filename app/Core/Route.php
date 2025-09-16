@@ -118,16 +118,9 @@ class Route
                     }
                 }
 
-                list($controller, $method) = explode('@', $route['action']);
-                /** PENJELASAN
-                 * 
-                 * explode('@', $route['action']) memisahkan string action menjadi nama controller dan metode.
-                 * Misal: 'HomeController@index' menjadi ['HomeController', 'index']
-                 * 
-                 * list($controller, $method) menempatkan elemen pertama ke $controller dan kedua ke $method.
-                 * Jadi, $controller = 'HomeController' dan $method = 'index'.
-                 * 
-                 */
+                $action = explode('@', $route['action']);
+                $controller = $action[0];
+                $method = $action[1];
 
                 $className = "App\\Controllers\\$controller";
                 $obj = new $className();
